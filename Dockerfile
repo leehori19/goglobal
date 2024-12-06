@@ -1,26 +1,22 @@
+# backend/server/Dockerfile
 # Use Node.js LTS version
 FROM node:16-alpine
 
 # Set the working directory
 WORKDIR /app
 
-# Copy dependency files (package.json and yarn.lock, if available)
-COPY package.json yarn.lock ./
+# Copy dependency files
+COPY package.json package-lock.json ./
 
-# Install dependencies using Yarn
-RUN yarn install
+# Install dependencies using npm
+RUN npm install
 
-# Copy the rest of the application
+# Copy the rest of the application files
 COPY . .
 
-# Build the application
-RUN yarn build
+# Expose the port the app will run on
+EXPOSE 4000
 
-# Expose the port for the app
-EXPOSE 3000
+# Start the application
+CMD ["npm", "start"]
 
-# Install `serve` globally to serve the production build
-RUN yarn global add serve
-
-# Run the app with `serve`
-CMD ["serve", "-s", "build", "-l", "3000"]
