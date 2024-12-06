@@ -1,0 +1,45 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./backend/server
+      dockerfile: Dockerfile
+    ports:
+      - '4000:4000'
+    env_file:
+      - .env
+    environment:
+      - PORT=4000
+    depends_on:
+      - postgres
+      - mongo
+
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: your_db_username
+      POSTGRES_PASSWORD: your_db_password
+      POSTGRES_DB: goglobal_development
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  mongo:
+    image: mongo:4.4
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  postgres-data:
+  mongo-data:
